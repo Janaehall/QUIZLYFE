@@ -11,8 +11,8 @@ class GameBoardController < ApplicationController
     end
 
     def update
-        gameboard = GameBoard.find(params[:id])
-        gameboard.score = params[:data][:attributes][:score]
-        gameboard.save
+       gameboard = GameBoard.find(params[:id])
+       gameboard.score = params[:data][:attributes][:score]
+       gameboard.save
     end
 end
