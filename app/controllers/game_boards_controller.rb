@@ -1,2 +1,0 @@
-class GameBoardsController < ApplicationController
-end
