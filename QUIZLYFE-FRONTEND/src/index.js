@@ -1,6 +1,8 @@
 let askedQuestionArr;
 let questionArr;
 let correct;
+let formDiv= document.getElementById('form-div')
+let gameDiv = document.getElementById('game-div')
 
 function fetchGameBoard(){
   fetch('http://localhost:3000/game_board/1')
@@ -19,6 +21,7 @@ function renderBoard(board) {
   user.innerText = board["data"]["attributes"]["user"]["name"]
   board["included"].forEach(aq => renderAskedQuestion(aq))
 }
+
 function renderAskedQuestion(aq) {
   let question = aq["attributes"]["question"]
   const newArray = shuffle([[question['correct_answer'], "correct_answer", question["point_value"]], [question['incorrect_answer_1'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_2'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_3'], "incorrect_answer", question["point_value"]]])
@@ -66,7 +69,7 @@ function renderAskedQuestion(aq) {
     }
    })
 }
-  function addChoiceListener() {
+function addChoiceListener() {
     let questionContent = document.getElementById('question-content')
     let modal = document.getElementById("myModal")
     let modalContent = document.getElementsByClassName("modal-content")[0]
@@ -127,6 +130,7 @@ function renderAskedQuestion(aq) {
       }
   })
 }
+
 // grab answers and shuffle
 function shuffle(array){
  return array.sort(() => Math.random() - 0.5);
@@ -147,25 +151,48 @@ function updateAskedQuestion(id){
   .catch(error => console.log(error.message))
 }
 
-function fetchUser(newUser){
-  let reqObj = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      'name': newUser
-    })
+function fetchUser(){
+  let userData = document.getElementById('inputid')
+  let newUsername = userData.value
+
+    let reqObj = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: newUsername
+      })
+    }
+  
+    fetch(`http://localhost:3000/users`, reqObj)
+      .then(resp => resp.json())
+      .then(user => postUser(user))
   }
 
-  fetch(`http://localhost:3000/users`, reqObj)
 
+
+function postUser(){
+  let userForm = document.querySelector('#user-form')
+  userForm.addEventListener('submit', function(event){
+    event.preventDefault()
+    if(event.target.id === 'user-form'){
+      fetchUser();
+      elementDisplayHandler(formDiv, 'none');
+      elementDisplayHandler(gameDiv, 'block');
+  }
+})
 }
+
+function elementDisplayHandler(element, display){
+   element.style.display = display
+ }
 
 function main(){
   document.addEventListener('DOMContentLoaded', function(){
       addChoiceListener()
       fetchGameBoard();
+      postUser();
     })
 }
 

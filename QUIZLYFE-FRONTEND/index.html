@@ -4,31 +4,35 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
-      <!-- <div id="loginModal" class="classModal">
-        <div class="login-content">
-
-        </div>
-      </div> -->
-      <div id="myModal" class="modal">
-          <div class="modal-content">
-            <!-- <span class="close">&times;</span> -->
-            <div id="question-content"></div>
-            <!-- <div id="results"></div> -->
-            <!-- <div id="choices"></div> -->
-          </div>
-        </div>
-    <div class="gameboard">
-      <table>
-        <tr id="row-1">
-        </tr>
-        <tr id="row-2">
-        </tr>
-        <tr id="row-3">
-        </tr>
-      </table>
+      <div style='display: block' id='form-div'>
+        <form id="user-form">
+            Please enter Username:<br>
+            <input id="inputid" type="text" name="username"><br>
+            <button type="submit">Submit</button>
+        </form>
     </div>
-    <h3 id="score"></h3>
-    <h3 id="user"></h3>
+      <div style='display: none' id='game-div'>
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <div id="question-content"></div>
+              <div id="results"></div>
+              <div id="choices"></div>
+            </div>
+          </div>
+        <div class="gameboard">
+          <table>
+            <tr id="row-1">
+            </tr>
+            <tr id="row-2">
+            </tr>
+            <tr id="row-3">
+            </tr>
+          </table>
+        </div>
+        <h3 id="score"></h3>
+        <h3 id="user"></h3>
+      </div>
   </body>
   <script src="src/index.js"></script>
 </html>
