@@ -21,7 +21,7 @@ end
 
 User.create(name: "Janae")
 gb = GameBoard.create(user_id: 1)
-array = [Question.all.s elect{|q| q.difficulty == "easy"}.sample(3), Question.all.select{|q| q.difficulty=="medium"}.sample(3), Question.all.select{|q| q.difficulty == "hard"}.sample(3)].flatten
+array = [Question.all.select{|q| q.difficulty == "easy"}.sample(3), Question.all.select{|q| q.difficulty=="medium"}.sample(3), Question.all.select{|q| q.difficulty == "hard"}.sample(3)].flatten
 gb.questions = array
 
 
