@@ -61,7 +61,7 @@ function renderAskedQuestion(aq) {
   getSpan.addEventListener('click', function(event){
     modal.style.display = 'none'
   })
-
+}
 
   function addChoiceListener() {
     let questionContent = document.getElementById('question-content')
@@ -106,5 +106,3 @@ function main(){
 }
 
 main();
-
-
