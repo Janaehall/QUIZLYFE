@@ -76,21 +76,21 @@ document.addEventListener('DOMContentLoaded', function(){
         if(event.target.value === "correct_answer"){
           scoreVal = parseInt(score.innerText.split(' ')[1]) + parseInt(questionArr[event.target.parentElement.dataset.id-1]['point_value'])
           score.innerText = `Score: ${scoreVal}` 
-          // let reqObj =  {
-          //   method: 'PATCH',
-          //   headers: {
-          //     'Content-Type': 'application/json'
-          //   },
-          //   body: JSON.stringify({
-          //     'data': {
-          //       'attributes': {
-          //         'score': scoreVal
-          //       }
-          //     }
-          //   })
-          // }
+          let reqObj =  {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              'data': {
+                'attributes': {
+                  'score': scoreVal
+                }
+              }
+            })
+          }
 
-          // fetch(`http://localhost:3000/game_board/1`, reqObj)
+          fetch(`http://localhost:3000/game_board/1`, reqObj)
         }
       }
     })
