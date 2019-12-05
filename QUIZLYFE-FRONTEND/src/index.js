@@ -4,8 +4,8 @@ let correct;
 let formDiv= document.getElementById('form-div')
 let gameDiv = document.getElementById('game-div')
 
-function fetchGameBoard(){
-  fetch('http://localhost:3000/game_board/1')
+function fetchGameBoard(gameBoard){
+  fetch(`http://localhost:3000/game_board/${gameBoard.id}`)
   .then(resp => resp.json())
   .then(board => {
     askedQuestionArr = board.included
@@ -16,7 +16,6 @@ function fetchGameBoard(){
 function renderBoard(board) {
   let score = document.getElementById('score')
   let user = document.getElementById('user')
-  console.log(board["data"]["attributes"]["score"])
   score.innerText = `Score: ${board["data"]["attributes"]["score"]}`
   user.innerText = board["data"]["attributes"]["user"]["name"]
   board["included"].forEach(aq => renderAskedQuestion(aq))
@@ -51,13 +50,11 @@ function renderAskedQuestion(aq) {
       modalContent = document.getElementsByClassName('modal-content')[0]
       questionContent.style.backgroundColor = "white"
       modalContent.style.backgroundColor = "white"
-      // let questionContent = document.createElement('div')
-      // questionContent.id = 'question-content'
       questionContent.innerText = question.title
       modal.style.display = "block"
+      modal.dataset.id = aq.id
       resetCounter()
       decrementCounter()
-      modal.dataset.id = aq.id
       let choices = document.createElement('div')
       choices.id = `choices`
       choices.dataset.id = aq.id
@@ -100,9 +97,7 @@ function addChoiceListener() {
 
           fetch(`http://localhost:3000/game_board/1`, reqObj)
           .catch(error => console.log(error.message))
-          //get modal
           questionContent.innerHTML = ''
-          //'answer correct, + x points'
           questionContent.innerHTML = '<h3>You answered correctly!</h3>'
           modalContent.style.backgroundColor = "green"
           questionContent.style.backgroundColor = "green"
@@ -112,7 +107,6 @@ function addChoiceListener() {
           correct = false
           let correctAns = document.getElementById("correct_answer").innerText
           questionContent.innerHTML = ''
-          //'answer correct, + x points'
           questionContent.innerHTML = `<h3>You answered incorrectly!</h3><br><h3>Correct Answer:</h3><p>${correctAns}</p>`
           modalContent.style.backgroundColor = "red"
           questionContent.style.backgroundColor = "red"
@@ -142,7 +136,8 @@ function updateAskedQuestion(id){
   let reqObj =  {
     method: 'PATCH',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
     },
     body: JSON.stringify({
      'answered': true,
@@ -150,7 +145,8 @@ function updateAskedQuestion(id){
     })
   }
   fetch(`http:/localhost:3000/asked_questions/${id}`, reqObj)
-  .catch(error => console.log(error.message))
+  .then(resp => resp.json())
+  .then(question => console.log(question))
 }
 
 function fetchUser(){
@@ -169,12 +165,32 @@ function fetchUser(){
   
     fetch(`http://localhost:3000/users`, reqObj)
       .then(resp => resp.json())
-      .then(user => postUser(user))
+      .then(user => createGameBoard(user))
+
+
+  }
+
+
+  function createGameBoard(user){
+    let reqObj = {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        score: 0, 
+        user_id: user.id 
+      })
+    }
+
+    fetch('http://localhost:3000/game_board', reqObj)
+    .then(resp => resp.json())
+    .then(gameBoard => fetchGameBoard(gameBoard))
   }
 
 
 
-function postUser(){
+function postUser(user){
   let userForm = document.querySelector('#user-form')
   userForm.addEventListener('submit', function(event){
     event.preventDefault()
@@ -191,16 +207,41 @@ function elementDisplayHandler(element, display){
  }
 
 function decrementCounter() {
-  setInterval(function() {
+  let modal = document.getElementById('myModal')
+  let id = modal.dataset.id
+  let questionContent = document.getElementById('question-content')
+  let modalContent = document.getElementById('modal-content')
+  let counterVal = setInterval(function() {
     let counter = document.getElementById('counter')
     let cnt = parseInt(counter.innerText)
     counter.innerText = cnt - 1
+    if(cnt <= 0){
+      clearInterval(counterVal)
+      counter.innerText = ''
+      correct = false
+      let correctAns = document.getElementById("correct_answer").innerText
+      questionContent.innerHTML = ''
+      questionContent.innerHTML = `<h3>You ran out of time!</h3><br><h3>Correct Answer:</h3><p>${correctAns}</p>`
+      modalContent.style.backgroundColor = "red"
+      questionContent.style.backgroundColor = "red"
+      updateAskedQuestion(id)
+      card = document.getElementById(`${id}`)
+        card.innerText = 'Answered'
+        card.className = 'answered-card'
+        let continueBtn = document.createElement('button')
+        continueBtn.innerText = "Continue"
+        questionContent.appendChild(continueBtn)
+        continueBtn.addEventListener('click', function(){
+          modal.style.display = 'none'
+        })
+    }
   }, 1000)
 }
 
+
 function resetCounter(){
   let counter = document.getElementById('counter')
-  counter.innerText = 30
+  counter.innerText = 10
 }
 
 
@@ -209,7 +250,6 @@ function resetCounter(){
 function main(){
   document.addEventListener('DOMContentLoaded', function(){
       addChoiceListener()
-      fetchGameBoard();
       postUser();
     })
 }
