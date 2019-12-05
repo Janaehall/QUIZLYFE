@@ -28,20 +28,24 @@ function renderAskedQuestion(aq) {
   let question = aq["attributes"]["question"]
   const newArray = shuffle([[question['correct_answer'], "correct_answer", question["point_value"]], [question['incorrect_answer_1'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_2'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_3'], "incorrect_answer", question["point_value"]]])
   let tableRow
+  let imgurl;
   if(question.difficulty==="easy"){
     tableRow = document.getElementById('row-1')
+    imgurl = 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d8/Bundesstra%C3%9Fe_100_number.svg/800px-Bundesstra%C3%9Fe_100_number.svg.png'
   }
   else if(question.difficulty==="medium"){
     tableRow = document.getElementById('row-2')
+    imgurl = 'https://www.wrti.org/sites/wrti/files/201312/200.jpg'
   }
   else if(question.difficulty==="hard"){
     tableRow = document.getElementById('row-3')
+    imgurl = 'https://i-love-png.com/images/300.png'
   }
   if(aq["attributes"]["answered"] === false) {
-    tableRow.insertAdjacentHTML('beforeend', `<td><div class="unanswered-card" id=${aq.id}>${question.point_value}</div></td>`)
+    tableRow.insertAdjacentHTML('beforeend', `<td><div class='unanswered-card' id= "card-${aq.id}"><img id=${aq.id} class="unanswered-card-img" src=${imgurl}></div></td>`)
   }
   else if(aq["attributes"]["answered"] === true) {
-    tableRow.insertAdjacentHTML('beforeend', `<td><div class="answered-card" id=${aq.id}>Answered</div></td>`)
+    tableRow.insertAdjacentHTML('beforeend', `<td><div class='answered-card><img class = "answered-card-img" src='https://value-first.be/wp-content/uploads/2017/08/project-done.png'></div></td>`)
   }
   // create event listener
   let getId = document.getElementById(`${aq.id}`)
@@ -49,7 +53,7 @@ function renderAskedQuestion(aq) {
   let questionContent = document.getElementById('question-content')
 
   getId.addEventListener('click', function(event){
-    if (event.target.className === "unanswered-card") {
+    if (event.target.className === "unanswered-card-img") {
       modalContent = document.getElementsByClassName('modal-content')[0]
       questionContent.style.backgroundColor = "white"
       modalContent.style.backgroundColor = "white"
@@ -86,6 +90,7 @@ function addChoiceListener() {
       if(event.target.className === "choice") {
         clearInterval(myCounter)
         counter.innerText = ''
+        let id
 
         if(event.target.id === "correct_answer"){
           scoreVal = parseInt(score.innerText.split(' ')[1]) + parseInt(questionArr[event.target.parentElement.dataset.id]['point_value'])
@@ -112,6 +117,11 @@ function addChoiceListener() {
           questionContent.innerHTML = '<h3>You answered correctly!</h3>'
           modalContent.style.backgroundColor = "green"
           questionContent.style.backgroundColor = "green"
+          id = myModal.dataset.id
+          console.log(document.getElementById(`card-${id}`))
+          card = document.getElementById(`card-${id}`)
+          card.innerHTML = '<img class = "answered-card-img" src="https://www.colourbox.com/preview/12004600-correct.jpg">'
+          card.className = 'answered-card'
         }
 
         else if (event.target.id === "incorrect_answer"){
@@ -122,14 +132,22 @@ function addChoiceListener() {
           questionContent.innerHTML = `<h3>You answered incorrectly!</h3><br><h3>Correct Answer:</h3><p>${correctAns}</p>`
           modalContent.style.backgroundColor = "red"
           questionContent.style.backgroundColor = "red"
+          id = myModal.dataset.id
+        console.log(document.getElementById(`card-${id}`))
+        card = document.getElementById(`card-${id}`)
+          card.innerHTML = '<img class = "answered-card-img" src="https://www.colourbox.com/preview/12004558-incorrect.jpg">'
+          card.className = 'answered-card'
         }
                 // counter.innerText = ''
-        let id = myModal.dataset.id
-        card = document.getElementById(`${id}`)
-        card.innerText = 'Answered'
-        card.className = 'answered-card'
+        // let id = myModal.dataset.id
+        // console.log(document.getElementById(`card-${id}`))
+        // card = document.getElementById(`card-${id}`)
+        //   card.innerHTML = '<img class = "answered-card-img" src="https://www.colourbox.com/preview/12004558-incorrect.jpg">'
+        //   card.className = 'answered-card'
         updateAskedQuestion(id)
         let continueBtn = document.createElement('button')
+        continueBtn.type = "button"
+        continueBtn.class = "btn-success"
         continueBtn.innerText = "Continue"
         questionContent.appendChild(continueBtn)
         continueBtn.addEventListener('click', function(){
@@ -238,8 +256,11 @@ function decrementCounter() {
       modalContent.style.backgroundColor = "red"
       questionContent.style.backgroundColor = "red"
       updateAskedQuestion(id)
-      card = document.getElementById(`${id}`)
-        card.innerText = 'Answered'
+      console.log(document.getElementById(`card-${id}`))
+      card = document.getElementById(`card-${id}`)
+      console.log(document.getElementById(`card-${id}`))
+      card = document.getElementById(`card-${id}`)
+        card.innerHTML = '<img class = "answered-card-img" src="https://www.colourbox.com/preview/12004558-incorrect.jpg">'
         card.className = 'answered-card'
         let continueBtn = document.createElement('button')
         continueBtn.innerText = "Continue"
