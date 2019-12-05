@@ -2,7 +2,7 @@ class GameBoardController < ApplicationController
 
     def index
         gameboards = GameBoard.all
-        render json: gameboards
+        render json: gameboards, include: :user
     end
 
     def show

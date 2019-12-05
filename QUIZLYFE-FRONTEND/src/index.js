@@ -1,14 +1,17 @@
 let askedQuestionArr;
 let questionArr;
 let correct;
-let formDiv= document.getElementById('form-div')
+let formDiv = document.getElementById('form-div')
 let gameDiv = document.getElementById('game-div')
+let leaderBoardDiv = document.getElementById('leader-board-div')
 let myCounter;
+let gameBoardId;
 
 function fetchGameBoard(gameBoard){
   fetch(`http://localhost:3000/game_board/${gameBoard.id}`)
   .then(resp => resp.json())
   .then(board => {
+    gameBoardId = gameBoard.id
     askedQuestionArr = board.included
     questionArr = board.included.map(aq => aq.attributes.question)
     renderBoard(board)
@@ -111,7 +114,7 @@ function addChoiceListener() {
             })
           }
 
-          fetch(`http://localhost:3000/game_board/1`, reqObj)
+          fetch(`http://localhost:3000/game_board/${gameBoardId}`, reqObj)
           .catch(error => console.log(error.message))
           questionContent.innerHTML = ''
           questionContent.innerHTML = '<h3>You answered correctly!</h3>'
@@ -152,6 +155,9 @@ function addChoiceListener() {
         questionContent.appendChild(continueBtn)
         continueBtn.addEventListener('click', function(){
           modal.style.display = 'none'
+          if(document.getElementsByClassName('answered-card').length === 9){
+            youWon()
+          }
         })
       }
   })
@@ -267,9 +273,33 @@ function decrementCounter() {
         questionContent.appendChild(continueBtn)
         continueBtn.addEventListener('click', function(){
           modal.style.display = 'none'
+          if(document.getElementsByClassName('answered-card').length === 9){
+            youWon()
+          }
         })
     }
-  // }, 1000)
+}
+
+function youWon(){
+  let score = document.getElementById('score')
+  let fs = document.getElementById('final-score')
+  let wonModal = document.getElementById('won-modal')
+  let wonModalContent = document.getElementById('won-modal-content')
+  let finalScore = score.innerText.split(' ')[1]
+  wonModal.style.display = 'block'
+  wonModalContent.style.display = 'block'
+  fs.innerText = `Your final score was ${finalScore}`
+  goToLeaderBoard()
+}
+
+
+function goToLeaderBoard(){
+  let toLeaderBoard = document.getElementById('cont-leader-board')
+  toLeaderBoard.addEventListener('click', function(){
+    elementDisplayHandler(gameDiv, 'none');
+    elementDisplayHandler(leaderBoardDiv, 'block')
+  })
+
 }
 
 
@@ -278,11 +308,23 @@ function resetCounter(){
   counter.innerText = 10
 }
 
-
+function leaderBoard(){
+  let tbl  = document.getElementById('high-scores')
+  let array
+  fetch('http://localhost:3000/game_board')
+  .then(resp => resp.json())
+  .then(boards => {
+    array = boards
+    newArray = array.sort((a, b) => b.score - a.score)
+    let row
+    newArray.splice(0,5).forEach(b => tbl.insertAdjacentHTML('beforeend', `<tr><td><h3 id="user-name">${b.user.name}</h3></td><td><h3 id="user-score">${b.score}</h3></td><tr>`) )
+  })
+}
 
 
 function main(){
   document.addEventListener('DOMContentLoaded', function(){
+      leaderBoard()
       addChoiceListener()
       postUser();
     })
