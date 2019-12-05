@@ -3,6 +3,7 @@ let questionArr;
 let correct;
 let formDiv= document.getElementById('form-div')
 let gameDiv = document.getElementById('game-div')
+let myCounter;
 
 function fetchGameBoard(gameBoard){
   fetch(`http://localhost:3000/game_board/${gameBoard.id}`)
@@ -22,6 +23,8 @@ function renderBoard(board) {
 }
 
 function renderAskedQuestion(aq) {
+  // askedQ = askedQuestionArr.find(askedQuestion => askedQuestion.id === aq.id)
+  // console.log(askedQuestionArr.indexOf(aq))
   let question = aq["attributes"]["question"]
   const newArray = shuffle([[question['correct_answer'], "correct_answer", question["point_value"]], [question['incorrect_answer_1'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_2'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_3'], "incorrect_answer", question["point_value"]]])
   let tableRow
@@ -53,11 +56,15 @@ function renderAskedQuestion(aq) {
       questionContent.innerText = question.title
       modal.style.display = "block"
       modal.dataset.id = aq.id
+      myCounter = setInterval(decrementCounter, 1000)
       resetCounter()
       decrementCounter()
       let choices = document.createElement('div')
       choices.id = `choices`
-      choices.dataset.id = aq.id
+      // choices.addEventListener('click', function(){
+      //   // clearInterval(myCounter)
+      // })
+      choices.dataset.id = askedQuestionArr.indexOf(aq)
       choices.innerHTML = ''
       newArray.forEach(answer => {
         if(answer[0] != null ) {
@@ -74,10 +81,14 @@ function addChoiceListener() {
     let modalContent = document.getElementsByClassName("modal-content")[0]
     questionContent.addEventListener('click', function(event){
     let score = document.getElementById('score')
+    let counter = document.getElementById('counter')
 
       if(event.target.className === "choice") {
+        clearInterval(myCounter)
+        counter.innerText = ''
+
         if(event.target.id === "correct_answer"){
-          scoreVal = parseInt(score.innerText.split(' ')[1]) + parseInt(questionArr[event.target.parentElement.dataset.id-1]['point_value'])
+          scoreVal = parseInt(score.innerText.split(' ')[1]) + parseInt(questionArr[event.target.parentElement.dataset.id]['point_value'])
           score.innerText = `Score: ${scoreVal}` 
           correct = true
 
@@ -104,6 +115,7 @@ function addChoiceListener() {
         }
 
         else if (event.target.id === "incorrect_answer"){
+      
           correct = false
           let correctAns = document.getElementById("correct_answer").innerText
           questionContent.innerHTML = ''
@@ -111,7 +123,7 @@ function addChoiceListener() {
           modalContent.style.backgroundColor = "red"
           questionContent.style.backgroundColor = "red"
         }
-
+                // counter.innerText = ''
         let id = myModal.dataset.id
         card = document.getElementById(`${id}`)
         card.innerText = 'Answered'
@@ -145,8 +157,6 @@ function updateAskedQuestion(id){
     })
   }
   fetch(`http:/localhost:3000/asked_questions/${id}`, reqObj)
-  .then(resp => resp.json())
-  .then(question => console.log(question))
 }
 
 function fetchUser(){
@@ -206,22 +216,25 @@ function elementDisplayHandler(element, display){
    element.style.display = display
  }
 
+
 function decrementCounter() {
+  console.log('goodbye')
   let modal = document.getElementById('myModal')
   let id = modal.dataset.id
   let questionContent = document.getElementById('question-content')
   let modalContent = document.getElementById('modal-content')
-  let counterVal = setInterval(function() {
+  // // let counterVal = setInterval(function() {
     let counter = document.getElementById('counter')
     let cnt = parseInt(counter.innerText)
     counter.innerText = cnt - 1
-    if(cnt <= 0){
-      clearInterval(counterVal)
+    // let correctAns = document.getElementById("correct_answer").innerText
+    if(cnt <= 0 || Number.isNaN(cnt)){
+      console.log('hello')
+      clearInterval(myCounter)
       counter.innerText = ''
       correct = false
-      let correctAns = document.getElementById("correct_answer").innerText
       questionContent.innerHTML = ''
-      questionContent.innerHTML = `<h3>You ran out of time!</h3><br><h3>Correct Answer:</h3><p>${correctAns}</p>`
+      questionContent.innerHTML = `<h3>You ran out of time! </h3></p>`
       modalContent.style.backgroundColor = "red"
       questionContent.style.backgroundColor = "red"
       updateAskedQuestion(id)
@@ -235,7 +248,7 @@ function decrementCounter() {
           modal.style.display = 'none'
         })
     }
-  }, 1000)
+  // }, 1000)
 }
 
 
