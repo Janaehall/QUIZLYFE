@@ -1,3 +1,11 @@
+html { 
+  background: url(https://images.wallpaperscraft.com/image/question_question_mark_symbol_140746_1920x1080.jpg) no-repeat center center fixed; 
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
 
 .unanswered-card {
   text-align:center;
@@ -44,6 +52,7 @@
 .gameboard {
   display:inline-block;
   /* padding-left: 585px; */
+  padding-top: 12.5%;
   padding-left: 36.5%
 }
 .modal {
@@ -85,14 +94,16 @@
   cursor: pointer;
 }
 
+
+
 .form-div{
   text-align: center;
   background-color: white;
   width: 300px;
   border: 1px solid rgb(111, 0, 255);
   padding: 50px;
-  margin-top: 400px;
-  margin-left: 625px;
+  margin: auto;
+  margin-top: 20%;
 }
 
 
@@ -120,3 +131,4 @@
 .body{
   background-clip: url('');
 }
+
