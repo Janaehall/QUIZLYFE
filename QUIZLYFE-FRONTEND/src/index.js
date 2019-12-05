@@ -4,11 +4,14 @@ let correct;
 let formDiv= document.getElementById('form-div')
 let gameDiv = document.getElementById('game-div')
 let myCounter;
+let gameBoardId;
+let restartBtn = document.getElementById('restart')
 
 function fetchGameBoard(gameBoard){
   fetch(`http://localhost:3000/game_board/${gameBoard.id}`)
   .then(resp => resp.json())
   .then(board => {
+    gameBoardId = gameBoard.id
     askedQuestionArr = board.included
     questionArr = board.included.map(aq => aq.attributes.question)
     renderBoard(board)
@@ -23,8 +26,6 @@ function renderBoard(board) {
 }
 
 function renderAskedQuestion(aq) {
-  // askedQ = askedQuestionArr.find(askedQuestion => askedQuestion.id === aq.id)
-  // console.log(askedQuestionArr.indexOf(aq))
   let question = aq["attributes"]["question"]
   const newArray = shuffle([[question['correct_answer'], "correct_answer", question["point_value"]], [question['incorrect_answer_1'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_2'], "incorrect_answer", question["point_value"]], [question['incorrect_answer_3'], "incorrect_answer", question["point_value"]]])
   let tableRow
@@ -65,9 +66,6 @@ function renderAskedQuestion(aq) {
       decrementCounter()
       let choices = document.createElement('div')
       choices.id = `choices`
-      // choices.addEventListener('click', function(){
-      //   // clearInterval(myCounter)
-      // })
       choices.dataset.id = askedQuestionArr.indexOf(aq)
       choices.innerHTML = ''
       newArray.forEach(answer => {
@@ -96,6 +94,7 @@ function addChoiceListener() {
           scoreVal = parseInt(score.innerText.split(' ')[1]) + parseInt(questionArr[event.target.parentElement.dataset.id]['point_value'])
           score.innerText = `Score: ${scoreVal}` 
           correct = true
+          console.log(scoreVal)
 
           let reqObj =  {
             method: 'PATCH',
@@ -111,7 +110,7 @@ function addChoiceListener() {
             })
           }
 
-          fetch(`http://localhost:3000/game_board/1`, reqObj)
+          fetch(`http://localhost:3000/game_board/${gameBoardId}`, reqObj)
           .catch(error => console.log(error.message))
           questionContent.innerHTML = ''
           questionContent.innerHTML = '<h3>You answered correctly!</h3>'
@@ -138,12 +137,6 @@ function addChoiceListener() {
           card.innerHTML = '<img class = "answered-card-img" src="https://www.colourbox.com/preview/12004558-incorrect.jpg">'
           card.className = 'answered-card'
         }
-                // counter.innerText = ''
-        // let id = myModal.dataset.id
-        // console.log(document.getElementById(`card-${id}`))
-        // card = document.getElementById(`card-${id}`)
-        //   card.innerHTML = '<img class = "answered-card-img" src="https://www.colourbox.com/preview/12004558-incorrect.jpg">'
-        //   card.className = 'answered-card'
         updateAskedQuestion(id)
         let continueBtn = document.createElement('button')
         continueBtn.type = "button"
@@ -236,16 +229,13 @@ function elementDisplayHandler(element, display){
 
 
 function decrementCounter() {
-  console.log('goodbye')
   let modal = document.getElementById('myModal')
   let id = modal.dataset.id
   let questionContent = document.getElementById('question-content')
   let modalContent = document.getElementById('modal-content')
-  // // let counterVal = setInterval(function() {
     let counter = document.getElementById('counter')
     let cnt = parseInt(counter.innerText)
     counter.innerText = cnt - 1
-    // let correctAns = document.getElementById("correct_answer").innerText
     if(cnt <= 0 || Number.isNaN(cnt)){
       console.log('hello')
       clearInterval(myCounter)
@@ -269,17 +259,20 @@ function decrementCounter() {
           modal.style.display = 'none'
         })
     }
-  // }, 1000)
 }
-
-
 function resetCounter(){
   let counter = document.getElementById('counter')
   counter.innerText = 10
 }
 
+// gameDiv.addEventListener('click', function(event){
+//   if(event.target.id === 'login'){
+//     location.reload(true)
+//   } else if(event.target.id === 'restart'){
 
-
+//     fetchUser()
+//   }
+// })
 
 function main(){
   document.addEventListener('DOMContentLoaded', function(){
