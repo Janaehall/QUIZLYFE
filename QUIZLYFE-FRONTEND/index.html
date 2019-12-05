@@ -22,6 +22,14 @@
               <div id="choices"></div>
             </div>
           </div>
+          <div id="won-modal" class="modal">
+          <div class="modal-content" id="won-modal-content" style="display:none">
+            <h2>Congratulations! You won!</h2>
+            <h4>It's literally impossible to lose, but you should be proud of yourself anyways</h4>
+            <h4 id="final-score"></h4>
+            <button id="cont-leader-board">Leader Board</button>
+          </div>
+        </div>
         <div class="gameboard">
           <table>
             <tr id="row-1">
@@ -32,10 +40,22 @@
             </tr>
           </table>
         </div>
-        <h3 id="score"></h3>
-        <h3 id="user"></h3>
-        <button id="login">Back to Login</button><br>
-        <button id="restart">Restart Game</button>
+        <div class="info">
+            <h1 id="user"></h1>
+            <h1 id="score"></h1>
+        </div>
+      </div>
+      <div style='display: none' id='leader-board-div'>
+          <table id="high-scores">
+              <thead>
+                <tr>
+                  <th class="header">Name</th>
+                  <th class="header">Score</th>
+                </tr>
+              </thead>
+              <tbody id="high-scores-body">
+              </tbody>
+            </table>
       </div>
   </body>
   <script src="src/index.js"></script>
