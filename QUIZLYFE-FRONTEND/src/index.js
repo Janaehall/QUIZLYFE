@@ -304,6 +304,12 @@ function leaderBoard(){
     let row
     newArray.splice(0,5).forEach(b => tbl.insertAdjacentHTML('beforeend', `<tr><td><h3 id="user-name">${b.user.name}</h3></td><td><h3 id="user-score">${b.score}</h3></td><tr>`) )
   })
+  let scoreDiv = document.getElementById('leader-board-div')
+  scoreDiv.addEventListener('click', function(event){
+    if(event.target.id === 'login'){
+      location.reload()
+    }
+  })
 }
 
 
