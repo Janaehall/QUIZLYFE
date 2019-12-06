@@ -114,8 +114,8 @@ function addChoiceListener() {
           .catch(error => console.log(error.message))
           questionContent.innerHTML = ''
           questionContent.innerHTML = '<h3>You answered correctly!</h3>'
-          modalContent.style.backgroundColor = "green"
-          questionContent.style.backgroundColor = "green"
+          modalContent.style.backgroundColor = '#99ff99'
+          questionContent.style.backgroundColor = "#99ff99"
           id = myModal.dataset.id
           console.log(document.getElementById(`card-${id}`))
           card = document.getElementById(`card-${id}`)
@@ -129,8 +129,8 @@ function addChoiceListener() {
           let correctAns = document.getElementById("correct_answer").innerText
           questionContent.innerHTML = ''
           questionContent.innerHTML = `<h3>You answered incorrectly!</h3><br><h3>Correct Answer:</h3><p>${correctAns}</p>`
-          modalContent.style.backgroundColor = "red"
-          questionContent.style.backgroundColor = "red"
+          modalContent.style.backgroundColor = "#ff4d4d"
+          questionContent.style.backgroundColor = "#ff4d4d"
           id = myModal.dataset.id
         console.log(document.getElementById(`card-${id}`))
         card = document.getElementById(`card-${id}`)
@@ -246,8 +246,8 @@ function decrementCounter() {
       correct = false
       questionContent.innerHTML = ''
       questionContent.innerHTML = `<h3>You ran out of time! </h3></p>`
-      modalContent.style.backgroundColor = "red"
-      questionContent.style.backgroundColor = "red"
+      modalContent.style.backgroundColor = "#ff4d4d"
+      questionContent.style.backgroundColor = "#ff4d4d"
       updateAskedQuestion(id)
       console.log(document.getElementById(`card-${id}`))
       card = document.getElementById(`card-${id}`)
@@ -275,6 +275,7 @@ function youWon(){
   let finalScore = score.innerText.split(' ')[1]
   wonModal.style.display = 'block'
   wonModalContent.style.display = 'block'
+  wonModalContent.style.backgroundColor = "#99ff99"
   fs.innerText = `Your final score was ${finalScore}`
   goToLeaderBoard()
 }
@@ -301,10 +302,16 @@ function leaderBoard(){
   .then(boards => {
     array = boards
     newArray = array.sort((a, b) => b.score - a.score)
-    let row
-    newArray.splice(0,5).forEach(b => tbl.insertAdjacentHTML('beforeend', `<tr><td><h3 id="user-name">${b.user.name}</h3></td><td><h3 id="user-score">${b.score}</h3></td><tr>`) )
+    newArray.slice(0,5).forEach(b => tbl.insertAdjacentHTML('beforeend', `<tr><td><h3 id="user-name">${b.user.name}</h3></td><td><h3 id="user-score">${b.score}</h3></td><tr>`) )
+  })
+  let scoreDiv = document.getElementById('leader-board-div')
+  scoreDiv.addEventListener('click', function(event){
+    if(event.target.id === 'login'){
+      location.reload()
+    }
   })
 }
+
 
 
 function main(){
